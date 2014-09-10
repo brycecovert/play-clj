@@ -24,7 +24,7 @@
                          scale-x scale-y angle origin-x origin-y]}
                  _
                  batch]
-    (let [x (float (or x 0))
+    (let [x (- (float (or x 0)) (* (float (or origin-x 0.0)) (float (or scale-x 1.0))))
           y (float (or y 0))
           width (float (or width (.getRegionWidth object)))
           height (float (or height (.getRegionHeight object)))]
