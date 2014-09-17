@@ -475,7 +475,9 @@ with the tiled map file at `path` and `unit` scale.
   (let [^Batch batch (.getBatch renderer)]
     (.begin batch)
     (doseq [entity entities]
-      (e/draw-entity! entity screen batch))
+      (.setColor batch (color 1 1 1 (or (:opacity entity) 1.0)))
+      (e/draw-entity! entity screen batch)
+      (.setColor batch (color 1 1 1 1)))
     (.end batch))
   entities)
 
