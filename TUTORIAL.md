@@ -44,10 +44,10 @@ Right now, you're using the `play-clj.ui` library to display a label. This libra
             [play-clj.g2d :refer :all]))
 ```
 
-Now let's find an image to use as a texture in the game. Find one you'd like to use, such as [this Clojure logo](http://upload.wikimedia.org/wikipedia/commons/c/c5/Clojure-icon.gif), and save it to the `desktop/resources` folder. Next, simply change the line where the label entity is being created, so it creates a texture from that file instead:
+Now let's find an image to use as a texture in the game. Find one you'd like to use, such as [this Clojure logo](http://upload.wikimedia.org/wikipedia/en/1/1d/Clojure_logo.gif), and save it to the `desktop/resources` folder. Next, simply change the line where the label entity is being created, so it creates a texture from that file instead:
 
 ```clojure
-    (texture "Clojure-icon.gif")
+    (texture "Clojure_logo.gif")
 ```
 
 ## Size and Position
@@ -61,14 +61,14 @@ If you run the code now, you'll see the image in the bottom-left corner. As ment
 A `texture` contains the underlying Java object. By default, it will be drawn at the bottom-left corner with the size of the image itself. You can change the position and size by simply using `assoc`:
 
 ```clojure
-    (assoc (texture "Clojure-icon.gif")
+    (assoc (texture "Clojure_logo.gif")
            :x 50 :y 50 :width 100 :height 100)
 ```
 
 You can also set scaling and rotation on a texture using :scale-x, :scale-y, and :angle, which all use (:origin-x, :origin-y) as the center. For example, here we rotate it 45 degrees counter-clockwise around the bottom-left corner:
 
 ```clojure
-    (assoc (texture "Clojure-icon.gif")
+    (assoc (texture "Clojure_logo.gif")
            :x 50 :y 50 :width 100 :height 100
            :angle 45 :origin-x 0 :origin-y 0)
 ```
@@ -117,13 +117,13 @@ The [game](http://oakes.github.io/play-clj/core.game.html) function gives you co
   :on-touch-down
   (fn [screen entities]
     (cond
-      (> (game :point-y) (* (game :height) (/ 2 3)))
+      (> (game :y) (* (game :height) (/ 2 3)))
       (println "up")
-      (< (game :point-y) (/ (game :height) 3))
+      (< (game :y) (/ (game :height) 3))
       (println "down")
-      (> (game :point-x) (* (game :width) (/ 2 3)))
+      (> (game :x) (* (game :width) (/ 2 3)))
       (println "right")
-      (< (game :point-x) (/ (game :width) 3))
+      (< (game :x) (/ (game :width) 3))
       (println "left")))
 ```
 
@@ -162,13 +162,13 @@ Now we can update our `:on-key-down` and `:on-touch-down` functions to move the 
   :on-touch-down
   (fn [screen entities]
     (cond
-      (> (game :point-y) (* (game :height) (/ 2 3)))
+      (> (game :y) (* (game :height) (/ 2 3)))
       (move (first entities) :up)
-      (< (game :point-y) (/ (game :height) 3))
+      (< (game :y) (/ (game :height) 3))
       (move (first entities) :down)
-      (> (game :point-x) (* (game :width) (/ 2 3)))
+      (> (game :x) (* (game :width) (/ 2 3)))
       (move (first entities) :right)
-      (< (game :point-x) (/ (game :width) 3))
+      (< (game :x) (/ (game :width) 3))
       (move (first entities) :left)))
 ```
 
@@ -252,13 +252,13 @@ At some point, you will need to do more than simple positioning and sizing. For 
 In play-clj, many different calls, such as `texture`, are actually macros that allow you to call the underlying Java methods after the required argument(s). In this case, the underlying class is called [TextureRegion](http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/graphics/g2d/TextureRegion.html). Consider this:
 
 ```clojure
-    (texture "Clojure-icon.gif" :flip true false)
+    (texture "Clojure_logo.gif" :flip true false)
 ```
 
 ...which is transformed into:
 
 ```clojure
-    (let [entity (texture "Clojure-icon.gif")]
+    (let [entity (texture "Clojure_logo.gif")]
       (doto ^TextureRegion (:object entity)
         (.flip true false))
       entity)
@@ -267,7 +267,7 @@ In play-clj, many different calls, such as `texture`, are actually macros that a
 You can even call multiple methods in the same expression this way. For example:
 
 ```clojure
-    (texture "Clojure-icon.gif"
+    (texture "Clojure_logo.gif"
              :flip true false
              :set-region 0 0 100 100)
 ```
@@ -275,10 +275,10 @@ You can even call multiple methods in the same expression this way. For example:
 ...which is transformed into:
 
 ```clojure
-    (let [entity (texture "Clojure-icon.gif")]
+    (let [entity (texture "Clojure_logo.gif")]
       (doto ^TextureRegion (:object entity)
         (.flip true false)
-        (.setRegion 0 0 100 100)
+        (.setRegion 0 0 100 100))
       entity)
 ```
 

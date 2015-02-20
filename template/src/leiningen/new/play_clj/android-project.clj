@@ -1,15 +1,14 @@
 (defproject {{app-name}} "0.0.1-SNAPSHOT"
   :description "FIXME: write description"
   
-  :dependencies [[com.badlogicgames.gdx/gdx "1.4.1" :use-resources true]
-                 [com.badlogicgames.gdx/gdx-backend-android "1.4.1"]
-                 [com.badlogicgames.gdx/gdx-box2d "1.4.1"]
-                 [com.badlogicgames.gdx/gdx-bullet "1.4.1"]
-                 [neko/neko "3.0.2"]
+  :dependencies [[com.badlogicgames.gdx/gdx "1.5.3" :use-resources true]
+                 [com.badlogicgames.gdx/gdx-backend-android "1.5.3"]
+                 [com.badlogicgames.gdx/gdx-box2d "1.5.3"]
+                 [com.badlogicgames.gdx/gdx-bullet "1.5.3"]
+                 [neko/neko "3.1.1"]
                  [org.clojure-android/clojure "1.6.0-RC1" :use-resources true]
-                 [play-clj "0.4.1"]]
-  :profiles {:dev {:dependencies [[android/tools.nrepl "0.2.0-bigstack"]
-                                  [compliment "0.1.3"]]
+                 [play-clj "0.4.4"]]
+  :profiles {:dev {:dependencies [[org.clojure-android/tools.nrepl "0.2.6"]]
                    :android {:aot :all-with-unused}}
              :release {:android
                        {;; Specify the path to your private
@@ -26,7 +25,7 @@
             ;; Uncomment this if dexer fails with OutOfMemoryException
             ;; :force-dex-optimize true
             
-            :assets-path "../desktop/resources"
+            :assets-paths ["../desktop/resources"]
             :native-libraries-paths ["libs"]
             :target-version "{{target-sdk}}"
             :aot-exclude-ns ["clojure.parallel" "clojure.core.reducers"]

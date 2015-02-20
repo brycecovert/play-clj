@@ -172,7 +172,8 @@ via the screen map.
         entities))
 
     ; input functions
-    ; Tip: convert :input-x and :input-y to screen coordinates with input->screen
+    ; Tip: convert :input-x and :input-y to screen coordinates with input->screen,
+    ; or just use (game :x) and (game :y) instead
     (defscreen my-screen
       ; a key was pressed
       :on-key-down
@@ -225,7 +226,6 @@ via the screen map.
         entities))
 
     ; gesture functions
-    ; Tip: use gesture-detector! to configure these functions
     (defscreen my-screen
       ; the user dragged over the screen and lifted
       :on-fling
@@ -322,20 +322,12 @@ via the screen map.
         entities))
 
     ; ui input functions (for play-clj.ui)
-    ; Tip: use click-listener! to configure these functions
     (defscreen my-screen
-      ; the ui entity was changed
+      ; the ui entity was clicked or changed
       :on-ui-changed
       (fn [screen entities]
         (println (:event screen)) ; the ChangeListener.ChangeEvent - http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/scenes/scene2d/utils/ChangeListener.ChangeEvent.html
         (println (:actor screen)) ; the Actor - http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/scenes/scene2d/Actor.html
-        entities)
-      ; the ui entity was clicked
-      :on-ui-clicked
-      (fn [screen entities]
-        (println (:event screen)) ; the InputEvent - http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/scenes/scene2d/InputEvent.html
-        (println (:input-x screen)) ; the x position of the finger/mouse
-        (println (:input-y screen)) ; the y position of the finger/mouse
         entities)
       ; the finger/mouse moved over the ui entity
       :on-ui-enter
@@ -383,7 +375,6 @@ via the screen map.
         entities))
 
     ; ui drag functions (for play-clj.ui)
-    ; Tip: use drag-listener! to configure these functions
     (defscreen my-screen
       :on-ui-drag
       (fn [screen entities]
@@ -517,6 +508,10 @@ keywords and functions in pairs."
 
     (set-screen! my-game main-screen text-screen)"
   [^Game game-object & screen-objects]
+  (doseq [screen screen-objects]
+    (assert (every? #(fn? (get screen %))
+                    [:show :render :hide :pause :resize :resume])
+            "Attempted to set an invalid screen."))
   (let [run-fn! (fn [k & args]
                   (doseq [screen screen-objects]
                     (apply (get screen k) args)))]
