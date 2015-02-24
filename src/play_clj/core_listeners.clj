@@ -186,11 +186,10 @@ in the `screen`."
 
 (defn ^:private update-stage!
   ([{:keys [^Stage renderer ^Camera camera] :as screen}]
-    (when camera
+    #_(when camera
       (doto (.getViewport renderer)
         (.setCamera camera)
-        (.setWorldSize (. camera viewportWidth) (. camera viewportHeight))
-        (.update (game :width) (game :height) true))))
+        (.setWorldSize (. camera viewportWidth) (. camera viewportHeight)))))
   ([{:keys [^Stage renderer ui-listeners]} entities]
     (doseq [^Actor a (.getActors renderer)]
       (.remove a))

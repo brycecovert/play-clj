@@ -486,8 +486,9 @@ with the tiled map file at `path` and `unit` scale.
   entities)
 
 (defmethod draw! Stage
-  [{:keys [^Stage renderer] :as screen} entities]
+  [{:keys [^Stage renderer ^Camera camera] :as screen} entities]
   (let [^Batch batch (.getBatch renderer)]
+    (.setProjectionMatrix batch (.combined camera))
     (.begin batch)
     (doseq [entity entities]
       (.setColor batch (color 1 1 1 (or (:opacity entity) 1.0)))
