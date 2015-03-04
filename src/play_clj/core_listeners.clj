@@ -190,16 +190,18 @@ in the `screen`."
       (doto (.getViewport renderer)
         (.setCamera camera)
         (.setWorldSize (. camera viewportWidth) (. camera viewportHeight)))))
-  ([{:keys [^Stage renderer ui-listeners]} entities]
-    (doseq [^Actor a (.getActors renderer)]
-      (.remove a))
-    (doseq [{:keys [object]} entities]
-      (when (isa? (type object) Actor)
-        (.addActor renderer object)
-        (doseq [[_ listener] ui-listeners]
-          (.addListener ^Actor object listener))))
-    (remove-input! renderer)
-    (add-input! renderer)))
+  ([{:keys [^Stage renderer ui-listeners]} [entities]]
+   (doseq [^Actor a (.getActors renderer)]
+     (.remove a))
+   (doseq [e (vals entities) ]
+     (let [object (:object e)]
+       (when (isa? (type object) Actor)
+         
+         (.addActor renderer object)
+         (doseq [[_ listener] ui-listeners]
+           (.addListener ^Actor object listener)))))
+   (remove-input! renderer)
+   (add-input! renderer)))
 
 (defmulti update-physics!
   (fn [screen & [entities]] (some-> screen :world class .getName))
