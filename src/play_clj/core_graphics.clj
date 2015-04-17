@@ -490,13 +490,24 @@ with the tiled map file at `path` and `unit` scale.
   (let [^Batch batch (.getBatch renderer)]
     (.setProjectionMatrix batch (.combined camera))
     (.begin batch)
-    (doseq [{:keys [additive? opacity] :as entity} entities]
+    (doseq [{:keys [additive? opacity colorize?] :as entity :or {opacity 1.0}} entities
+            :when (> opacity 0.0)]
+
+      
       (when additive?
         (.setBlendFunction ^Batch batch (gl :gl-src-alpha) (gl :gl-one)))
-      (.setColor batch (color 1 1 1 (or opacity 1.0)))
-      (e/draw! entity screen batch)
-      (.setColor batch (color 1 1 1 1))
-      (when additive?
+      (if colorize?
+        (do (.setBlendFunction ^Batch batch (gl :gl-dst-color) (gl :gl-one-minus-src-alpha))
+            (.setColor batch (color 1 1 1 opacity))
+            (e/draw! entity screen batch)
+            (.setColor batch (color 1 1 1 (* opacity 0.25)))
+            (.setBlendFunction ^Batch batch (gl :gl-src-alpha) (gl :gl-one))
+            (e/draw! entity screen batch))
+        (do (.setColor batch (color 1 1 1 opacity))
+            (e/draw! entity screen batch)
+            (.setColor batch (color 1 1 1 1))))
+      
+      (when (or additive? colorize?)
         (.setBlendFunction ^Batch batch (gl :gl-src-alpha) (gl :gl-one-minus-src-alpha))))
     (.end batch))
   entities)
