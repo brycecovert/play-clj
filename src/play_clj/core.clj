@@ -17,7 +17,7 @@
             VertexAttributes$Usage]
            [com.badlogic.gdx.graphics.g2d Batch ParticleEffect]
            [com.badlogic.gdx.graphics.g3d ModelBatch]
-           [com.badlogic.gdx.graphics.glutils ShapeRenderer]
+           [com.badlogic.gdx.graphics.glutils ShapeRenderer ShaderProgram]
            [com.badlogic.gdx.input GestureDetector
             GestureDetector$GestureListener]
            [com.badlogic.gdx.maps MapLayer MapLayers MapObject MapObjects
@@ -35,7 +35,8 @@
            [com.badlogic.gdx.scenes.scene2d.utils ActorGestureListener
             ChangeListener ClickListener DragListener FocusListener]
            [com.badlogic.gdx.utils ScreenUtils Timer$Task]
-           [play_clj.entities BundleEntity ShapeEntity]))
+           [play_clj.entities BundleEntity ShapeEntity]
+           ))
 
 (load "core_basics")
 (load "core_cameras")

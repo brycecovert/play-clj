@@ -486,28 +486,25 @@ with the tiled map file at `path` and `unit` scale.
   entities)
 
 (defmethod draw! Stage
-  [{:keys [^Stage renderer ^Camera camera] :as screen} entities]
+  [{:keys [^Stage renderer ^Camera camera ^ShaderProgram shader] :as screen} entities]
   (let [^Batch batch (.getBatch renderer)]
     (.setProjectionMatrix batch (.combined camera))
     (.begin batch)
-    (doseq [{:keys [additive? opacity colorize?] :as entity :or {opacity 1.0}} entities
+    (when shader
+      (.setShader batch shader))
+    (doseq [{:keys [additive? opacity ^float r ^float g ^float b ^float hue-amount ^float multiply-amount] :as entity :or {opacity 1.0}} entities
             :when (> opacity 0.0)]
-
+      (when shader
+        (.setUniformf shader "multiply_amount" (float (or multiply-amount 1.0)))
+        (.setUniformf shader "hue_amount" (float (or hue-amount 1.0))))
       
       (when additive?
         (.setBlendFunction ^Batch batch (gl :gl-src-alpha) (gl :gl-one)))
-      (if colorize?
-        (do (.setBlendFunction ^Batch batch (gl :gl-dst-color) (gl :gl-one-minus-src-alpha))
-            (.setColor batch (color 1 1 1 opacity))
-            (e/draw! entity screen batch)
-            (.setColor batch (color 1 1 1 (* opacity 0.25)))
-            (.setBlendFunction ^Batch batch (gl :gl-src-alpha) (gl :gl-one))
-            (e/draw! entity screen batch))
-        (do (.setColor batch (color 1 1 1 opacity))
-            (e/draw! entity screen batch)
-            (.setColor batch (color 1 1 1 1))))
+      (do (.setColor batch (color (or r 1.0) (or g 1.0) (or b 1.0)  opacity))
+          (e/draw! entity screen batch)
+          (.setColor batch (color 1 1 1 1)))
       
-      (when (or additive? colorize?)
+      (when (or additive?)
         (.setBlendFunction ^Batch batch (gl :gl-src-alpha) (gl :gl-one-minus-src-alpha))))
     (.end batch))
   entities)
