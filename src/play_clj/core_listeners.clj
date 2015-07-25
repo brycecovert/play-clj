@@ -192,12 +192,12 @@ in the `screen`."
         (.setWorldSize (. camera viewportWidth) (. camera viewportHeight)))))
   ([{:keys [^Stage renderer ui-listeners]} [entities]]
    (doseq [^Actor a (.getActors renderer)]
-     (.remove a))
+     #_(.remove a))
    (doseq [e (vals entities) ]
      (let [object (:object e)]
        (when (isa? (type object) Actor)
-         
-         (.addActor renderer object)
+         (when-not (.hasParent object)
+           (.addActor renderer object))
          (doseq [[_ listener] ui-listeners]
            (.addListener ^Actor object listener)))))
    (remove-input! renderer)
