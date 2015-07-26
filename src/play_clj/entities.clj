@@ -24,19 +24,17 @@
                          scale-x scale-y angle origin-x origin-y something]}
                  _
                  batch]
-    (let [x (- (float (or x 0)) (* (float (or origin-x 0.0)) (float (or scale-x 1.0))))
-          y (float (or y 0))
+    (let [x (float (- (float (or x 0)) (or origin-x 0.0)))
+          y (float (- (float (or y 0)) (or origin-y 0.0)))
           width (float (or width (.getRegionWidth object)))
           height (float (or height (.getRegionHeight object)))]
-      
-      
       (if (or scale-x scale-y angle)
         (let [scale-x (float (or scale-x 1))
               scale-y (float (or scale-y 1))
               origin-x (float (or origin-x (/ width 2)))
               origin-y (float (or origin-y (/ height 2)))
               angle (float (or angle 0))]
-          (.draw ^Batch batch object x y (* origin-x scale-x) (* origin-y scale-y) width height
+          (.draw ^Batch batch object x y origin-x origin-y width height
             scale-x scale-y angle))
         (.draw ^Batch batch object x y width height)))))
 
