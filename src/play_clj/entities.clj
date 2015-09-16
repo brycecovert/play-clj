@@ -47,7 +47,9 @@
       (.draw object ^Batch batch x y width height))))
 
 (defrecord ParticleEffectEntity [object] Entity
+           
   (draw! [{:keys [^ParticleEffect object x y delta-time]} _ batch]
+    (.setShader ^Batch batch nil)
     (let [x (float (or x 0))
           y (float (or y 0))
           ^Graphics g (Gdx/graphics)

@@ -490,11 +490,11 @@ with the tiled map file at `path` and `unit` scale.
   (let [^Batch batch (.getBatch renderer)]
     (.setProjectionMatrix batch (.combined camera))
     (.begin batch)
-    (when shader
-      (.setShader batch shader))
+    
     (doseq [{:keys [additive? opacity ^float r ^float g ^float b ^float hue-amount ^float multiply-amount] :as entity :or {opacity 1.0}} entities
             :when (> opacity 0.0)]
       (when shader
+        (.setShader batch shader)
         (.setUniformf shader "multiply_amount" (float (or multiply-amount 1.0)))
         (.setUniformf shader "hue_amount" (float (or hue-amount 1.0))))
       
@@ -559,11 +559,7 @@ specify which layers to render with or without.
 
     (render! screen entities)"
   ([{:keys [renderer] :as screen}]
-    (cond
-      (isa? (type renderer) BatchTiledMapRenderer)
-      (render-map! screen)
-      (isa? (type renderer) Stage)
-      (render-stage! screen)))
+     (render-stage! screen))
   ([screen entities]
     (render! screen)
     (draw! screen entities)))
