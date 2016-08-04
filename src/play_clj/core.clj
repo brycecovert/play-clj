@@ -46,11 +46,7 @@
 
 (defn ^:private normalize
   [entities]
-  (some->> entities
-           list
-           flatten
-           (remove nil?)
-           vec))
+  entities)
 
 (defn ^:private wrapper
   [screen-atom screen-fn]
@@ -76,16 +72,19 @@
   [screen entities
    {:keys [on-show on-render on-hide on-pause on-resize on-resume on-timer]
     :as options}]
-  (let [execute-fn! (fn [func & {:keys [] :as options}]
-                      (when func
-                        (let [screen-map (merge @screen options)
-                              old-entities @entities]
-                          (some->> (with-meta
-                                     #(normalize (func screen-map old-entities))
-                                     (meta func))
-                                   (wrapper screen)
-                                   (reset-changed! entities old-entities)
-                                   (update-screen! @screen)))))
+  (let [execute-fn! (fn exec
+                      ([func]
+                          (exec func {}))
+                      ([func options]
+                          (when func
+                            (let [screen-map (merge @screen options)
+                                  old-entities @entities]
+                              (some->> (with-meta
+                                         #(normalize (func screen-map old-entities))
+                                         (meta func)) 
+                                       (wrapper screen)
+                                       (reset-changed! entities old-entities)
+                                       (update-screen! @screen))))))
         execute-fn-on-gl! (fn [& args]
                             (on-gl (apply execute-fn! args)))
         update-fn! (fn [func & args]
@@ -118,12 +117,11 @@
                       update-screen!))
      :render (fn [d]
                (swap! screen update-in [:total-time] #(+ (or %1 0) %2) d)
-               (some->> (execute-fn! on-render :delta-time d)
-                        (add-to-timeline! screen)))
+               (execute-fn! on-render (assoc @screen :delta-time d)))
      :hide #(execute-fn! on-hide)
      :pause #(execute-fn! on-pause)
      :resize (fn [w h]
-               (execute-fn! on-resize :width w :height h)
+               (execute-fn! on-resize {:width w :height h})
                (update-screen! @screen))
      :resume #(execute-fn! on-resume)}))
 
@@ -488,7 +486,7 @@ keywords and functions in pairs."
                             (intern *ns* map-sym# (atom {}))))
          entities-sym# (symbol (str '~n "-entities"))
          entities# (deref (or (resolve entities-sym#)
-                              (intern *ns* entities-sym# (atom []))))]
+                              (intern *ns* entities-sym# (atom {}))))]
      (def ~n (defscreen* screen# entities# fn-syms#))))
 
 (defn defgame*
@@ -559,6 +557,7 @@ is the atom storing the screen map behind the scenes. Returns the updated
 
     (update! screen :renderer (stage))"
   [screen & args]
+  (println screen)
   (doto (apply (:update-fn! screen) assoc args)
     update-screen!))
 
@@ -568,8 +567,8 @@ of key-value pairs, which will be given to the function via its screen map.
 
     (screen! my-other-screen :on-show)
     (screen! my-other-screen :on-change-color :color :blue)"
-  [screen-object fn-name & options]
+  [screen-object fn-name options]
   (let [execute-fn! (:execute-fn! screen-object)
         screen-fn (-> screen-object :options (get fn-name))]
-    (apply execute-fn! screen-fn options)
+    (execute-fn! screen-fn options)
     nil))

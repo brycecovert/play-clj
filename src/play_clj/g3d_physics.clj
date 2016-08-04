@@ -273,9 +273,9 @@ such as :on-begin-contact."
    execute-fn!]
   (ContactListener3D.
     (fn [a b]
-      (execute-fn! on-begin-contact :first-body a :second-body b))
+      (execute-fn! on-begin-contact { :first-body a :second-body b}))
     (fn [a b]
-      (execute-fn! on-end-contact :first-body a :second-body b))))
+      (execute-fn! on-end-contact { :first-body a :second-body b}))))
 
 (defn ^:private get-bodies
   [screen]

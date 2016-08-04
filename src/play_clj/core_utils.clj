@@ -116,7 +116,7 @@ entities vector."
   [{:keys [execute-fn! on-timer]} id]
   (proxy [Timer$Task] []
     (run []
-      (execute-fn! on-timer :id id))))
+      (execute-fn! on-timer {:id id}))))
 
 (defn ^:private timer*
   []

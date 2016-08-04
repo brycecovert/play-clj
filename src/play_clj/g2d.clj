@@ -44,7 +44,7 @@
       (-> ^Pixmap arg Texture. TextureRegion.)
       (instance?  Texture arg)
       (-> ^Texture arg TextureRegion.)
-      (instance?  TextureEntity )
+      (instance?  TextureEntity arg)
       (-> ^TextureRegion (:object arg) TextureRegion.)
       :else
       arg)))

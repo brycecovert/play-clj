@@ -228,13 +228,13 @@ such as :on-begin-contact."
    execute-fn!]
   (reify ContactListener
     (beginContact [this c]
-      (execute-fn! on-begin-contact :contact c))
+      (execute-fn! on-begin-contact { :contact c}))
     (endContact [this c]
-      (execute-fn! on-end-contact :contact c))
+      (execute-fn! on-end-contact { :contact c}))
     (postSolve [this c i]
-      (execute-fn! on-post-solve :contact c :impulse i))
+      (execute-fn! on-post-solve { :contact c :impulse i}))
     (preSolve [this c m]
-      (execute-fn! on-pre-solve :contact c :old-manifold m))))
+      (execute-fn! on-pre-solve { :contact c :old-manifold m}))))
 
 (defmethod c/update-physics!
   "com.badlogic.gdx.physics.box2d.World"
