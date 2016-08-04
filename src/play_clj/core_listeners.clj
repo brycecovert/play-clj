@@ -194,7 +194,7 @@ in the `screen`."
      (let [actor-set (->> entities
                           vals
                           (map :object)
-                          (filter #(isa? (type %) Actor))
+                          (filter #(instance? Actor %))
                           set)]
        (doseq [^Actor a (clojure.set/difference (set (.getActors renderer)) actor-set )]
          (.remove a))
@@ -213,11 +213,11 @@ in the `screen`."
 
 (defn ^:private update-screen!
   ([{:keys [renderer world] :as screen}]
-    (when (isa? (type renderer) Stage)
+    (when (instance? Stage renderer)
       (update-stage! screen))
     (update-physics! screen))
   ([{:keys [renderer world] :as screen} entities]
-    (when (isa? (type renderer) Stage)
+    (when (instance?  Stage renderer)
       (update-stage! screen entities))
     (update-physics! screen entities)
     entities))

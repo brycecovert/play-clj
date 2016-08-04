@@ -40,11 +40,11 @@
       (-> (or (u/load-asset arg Texture)
               (Texture. ^String arg))
           TextureRegion.)
-      (isa? (type arg) Pixmap)
+      (instance?  Pixmap arg)
       (-> ^Pixmap arg Texture. TextureRegion.)
-      (isa? (type arg) Texture)
+      (instance?  Texture arg)
       (-> ^Texture arg TextureRegion.)
-      (isa? (type arg) TextureEntity)
+      (instance?  TextureEntity )
       (-> ^TextureRegion (:object arg) TextureRegion.)
       :else
       arg)))
@@ -208,7 +208,8 @@
 
     (animation! object :set-play-mode (play-mode :loop))"
   [object k & options]
-  `(u/call! ^Animation ~object ~k ~@options))
+  (let [object (vary-meta object assoc :tag `Animation)]
+    `(u/call! ~object ~k ~@options)))
 
 (defn animation->texture
   "Returns a `texture` entity with a frame from `animation` based on the total

@@ -110,7 +110,8 @@
 (defmacro catmull-rom-spline!
   "Calls a single method on a `catmull-rom-spline`."
   [object k & options]
-  `(u/call! ^CatmullRomSpline ~object ~k ~@options))
+  (let [object (vary-meta object assoc :tag `CatmullRomSpline)]
+    `(u/call! ^CatmullRomSpline ~object ~k ~@options)))
 
 ; circle
 
