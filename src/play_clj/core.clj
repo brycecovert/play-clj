@@ -557,7 +557,6 @@ is the atom storing the screen map behind the scenes. Returns the updated
 
     (update! screen :renderer (stage))"
   [screen & args]
-  (println screen)
   (doto (apply (:update-fn! screen) assoc args)
     update-screen!))
 
