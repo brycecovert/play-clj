@@ -77,10 +77,9 @@
                           (exec func {}))
                       ([func options]
                           (when func
-                            (let [screen-map (merge @screen options)
-                                  old-entities @entities]
+                            (let [old-entities @entities]
                               (some->> (with-meta
-                                         #(normalize (func screen-map old-entities))
+                                         #(normalize (func @screen old-entities options))
                                          (meta func)) 
                                        (wrapper screen)
                                        (reset-changed! entities old-entities)
@@ -116,8 +115,11 @@
                       (update-fn! assoc :contact-listener)
                       update-screen!))
      :render (fn [d]
-               (swap! screen update-in [:total-time] #(+ (or %1 0) %2) d)
-               (execute-fn! on-render (assoc @screen :delta-time d)))
+               (swap! screen (fn [s]
+                               (-> s
+                                   (assoc :delta-time d)
+                                   (update-in [:total-time] #(+ (or %1 0) d)))))
+               (execute-fn! on-render @screen))
      :hide #(execute-fn! on-hide)
      :pause #(execute-fn! on-pause)
      :resize (fn [w h]
