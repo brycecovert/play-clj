@@ -118,7 +118,7 @@
                (swap! screen (fn [s]
                                (-> s
                                    (assoc :delta-time d)
-                                   (update-in [:total-time] #(+ (or %1 0) d)))))
+                                   (update-in [:total-time] #(unchecked-add (or ^double %1 0) ^double d)))))
                (execute-fn! on-render @screen))
      :hide #(execute-fn! on-hide)
      :pause #(execute-fn! on-pause)
