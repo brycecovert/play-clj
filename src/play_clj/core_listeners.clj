@@ -191,19 +191,22 @@ in the `screen`."
         (.setCamera camera)
         (.setWorldSize (. camera viewportWidth) (. camera viewportHeight)))))
   ([{:keys [^Stage renderer ui-listeners]} entities]
-     (let [actor-set (->> entities
+     #_(let [actor-set (->> entities
                           vals
                           (map :object)
                           (filter #(instance? Actor %))
-                          set)]
-       (doseq [^Actor a (clojure.set/difference (set (.getActors renderer)) actor-set )]
+                          )]
+       #_(doseq [^Actor a (clojure.set/difference (set (.getActors renderer)) actor-set )]
          (.remove a))
-       (doseq [object (clojure.set/difference actor-set (set (.getActors renderer)) ) ]
-         (.addActor renderer object)
+       #_(doseq [[_ object] entities
+               :when (and (instance? Actor (:object object))
+                          (not (.contains (.getActors renderer) (:object object) true)))]
+         (.addActor renderer (:object object))
          (doseq [[_ listener] ui-listeners]
-           (.addListener ^Actor object listener)))
-       (remove-input! renderer)
-       (add-input! renderer))))
+           (.addListener ^Actor (:object object) listener)))
+       )
+     (remove-input! renderer)
+       (add-input! renderer)))
 
 (defmulti update-physics!
   (fn [screen & entities] (some-> screen :world class .getName))

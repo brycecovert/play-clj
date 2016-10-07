@@ -489,7 +489,7 @@ with the tiled map file at `path` and `unit` scale.
   [{:keys [^Stage renderer ^Camera camera ^ShaderProgram shader] :as screen} entities]
   (let [^Batch batch (.getBatch renderer)]
     (.setProjectionMatrix batch (.combined camera))
-    (.begin batch)
+    #_(.begin batch)
     
     (doseq [{:keys [additive? opacity ^float r ^float g ^float b ^float hue-amount ^float multiply-amount] :as entity :or {opacity 1.0}} entities
             :when (> opacity 0.0)]
@@ -506,7 +506,7 @@ with the tiled map file at `path` and `unit` scale.
       
       (when (or additive?)
         (.setBlendFunction ^Batch batch (gl :gl-src-alpha) (gl :gl-one-minus-src-alpha))))
-    (.end batch))
+    #_(.end batch))
   entities)
 
 (defmethod draw! ModelBatch
@@ -550,7 +550,10 @@ specify which layers to render with or without.
 (defn render-stage!
   "Calls the stage renderer from `screen`."
   [{:keys [^Stage renderer] :as screen}]
-  (doto renderer .act .draw)
+
+  (.end (.getBatch renderer))
+  (doto renderer .act)
+  (.begin (.getBatch renderer))
   nil)
 
 (defn render!

@@ -54,9 +54,7 @@
 
 (defn ^:private reset-changed!
   [e-atom e-old e-new]
-  (when (and (not= e-old e-new)
-             (compare-and-set! e-atom e-old e-new))
-    e-new))
+  (reset! e-atom e-new))
 
 (defn ^:private add-to-timeline!
   [screen-atom entities]
@@ -115,11 +113,19 @@
                       (update-fn! assoc :contact-listener)
                       update-screen!))
      :render (fn [d]
-               (swap! screen (fn [s]
-                               (-> s
-                                   (assoc :delta-time d)
-                                   (update-in [:total-time] #(unchecked-add (or ^double %1 0) ^double d)))))
-               (execute-fn! on-render @screen))
+               (let [s (.getTime (java.util.Date.))]
+                 (.begin (.getBatch ^Stage (:renderer @screen)))
+                 (swap! screen (fn [s]
+                                 (-> s
+                                     (assoc :delta-time 0.0167)
+                                     (update-in [:total-time] #(unchecked-add (or ^double %1 0) d)))))
+                 (let [r (execute-fn! on-render @screen)]
+                   (.end (.getBatch ^Stage (:renderer @screen)))
+                   #_(when (= 0 (rand-int 60))
+                     (println "delta:" (graphics! :get-raw-delta-time)))
+                   #_(when (< 6 (- (.getTime (java.util.Date.)) s))
+                     (println (- (.getTime (java.util.Date.)) s)))
+                   r)))
      :hide #(execute-fn! on-hide)
      :pause #(execute-fn! on-pause)
      :resize (fn [w h]

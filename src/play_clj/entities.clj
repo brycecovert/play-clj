@@ -21,11 +21,13 @@
 
 (defrecord TextureEntity [object] Entity
   (draw! [{:keys [^TextureRegion object x y width height
-                         scale-x scale-y angle origin-x origin-y something]}
+                         scale-x scale-y angle origin-x origin-y offset-x offset-y]}
                  _
                  batch]
-    (let [x (float (- (float (or x 0)) (or origin-x 0.0)))
-          y (float (- (float (or y 0)) (or origin-y 0.0)))
+    (let [x (float (+ (- (float (or x 0)) (or origin-x 0.0))
+                      (float (or offset-x 0))))
+          y (float (+ (- (float (or y 0)) (or origin-y 0.0))
+                      (float (or offset-y 0))))
           width (float (or width (.getRegionWidth object)))
           height (float (or height (.getRegionHeight object)))]
       (if (or scale-x scale-y angle)
