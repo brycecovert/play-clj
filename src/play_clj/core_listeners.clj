@@ -4,7 +4,7 @@
 
 (defn ^:private input-processor
   [{:keys [on-key-down on-key-typed on-key-up on-mouse-moved
-           on-scrolled on-touch-down on-touch-dragged on-touch-up]}
+           on-scrolled on-touch-down on-touch-dragged on-touch-up] :as screen}
    execute-fn!]
   (reify InputProcessor
     (keyDown [this k]
@@ -41,7 +41,7 @@ in the `screen`."
      (u/call! object# ~k ~@options)))
 
 (defn ^:private gesture-listener
-  [{:keys [on-fling on-long-press on-pan on-pan-stop on-pinch on-tap on-zoom]}
+  [{:keys [on-fling on-long-press on-pan on-pan-stop on-pinch on-tap on-zoom pinch-stop]}
    execute-fn!]
   (reify GestureDetector$GestureListener
     (fling [this vx vy b]
@@ -52,23 +52,27 @@ in the `screen`."
       (some? on-long-press))
     (pan [this x y dx dy]
       (execute-fn! on-pan {:input-x x :input-y y :delta-x dx :delta-y dy})
-      (some? on-pan))
+      false)
     (panStop [this x y p b]
       (execute-fn! on-pan-stop {:input-x x :input-y y :pointer p :button b})
-      (some? on-pan-stop))
+      false)
+    (pinchStop [this]
+      (execute-fn! pinch-stop
+                   {})
+      false)
     (pinch [this ip1 ip2 p1 p2]
       (execute-fn! on-pinch
                    {:initial-pointer-1 ip1 :initial-pointer-2 ip2
                     :pointer-1 p1 :pointer-2 p2})
-      (some? on-pinch))
+      false)
     (tap [this x y c b]
       (execute-fn! on-tap {:input-x x :input-y y :count c :button b})
-      (some? on-tap))
+      false)
     (touchDown [this x y p b]
       false)
     (zoom [this id d]
       (execute-fn! on-zoom {:initial-distance id :distance d})
-      (some? on-zoom))))
+      false)))
 
 (defn ^:private gesture-detector
   [options execute-fn!]
