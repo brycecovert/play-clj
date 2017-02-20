@@ -140,7 +140,8 @@
 (defn ^:private add-input!
   [^InputProcessor p]
   (when-let [^InputMultiplexer multi (input! :get-input-processor)]
-    (.addProcessor multi p)))
+    (when p
+      (.addProcessor multi p))))
 
 (defn ^:private remove-input!
   [^InputProcessor p]

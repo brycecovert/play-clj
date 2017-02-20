@@ -117,7 +117,7 @@
                  (.begin (.getBatch ^Stage (:renderer @screen)))
                  (swap! screen (fn [s]
                                  (-> s
-                                     (assoc :delta-time 0.0167)
+                                     (assoc :delta-time d)
                                      (update-in [:total-time] #(unchecked-add (or ^double %1 0) d)))))
                  (let [r (execute-fn! on-render @screen)]
                    (.end (.getBatch ^Stage (:renderer @screen)))

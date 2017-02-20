@@ -496,7 +496,7 @@ with the tiled map file at `path` and `unit` scale.
       (when shader
         (.setShader batch shader)
         (.setUniformf shader "multiply_amount" (float (or multiply-amount 1.0)))
-        (.setUniformf shader "hue_amount" (float (or hue-amount 1.0))))
+        (.setUniformf shader "hue_amount" (float (or hue-amount 0.0))))
       
       (when additive?
         (.setBlendFunction ^Batch batch (gl :gl-src-alpha) (gl :gl-one)))
