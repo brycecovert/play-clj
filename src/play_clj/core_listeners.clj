@@ -221,10 +221,9 @@ in the `screen`."
 (defn ^:private update-screen!
   ([{:keys [renderer world] :as screen}]
     (when (instance? Stage renderer)
-      (update-stage! screen))
-    (update-physics! screen))
+      (update-stage! screen)))
   ([{:keys [renderer world] :as screen} entities]
     (when (instance?  Stage renderer)
       (update-stage! screen entities))
-    (update-physics! screen entities)
+    
     entities))

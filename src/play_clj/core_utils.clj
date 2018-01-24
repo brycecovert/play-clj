@@ -175,7 +175,7 @@ found."
     (set-loaders! am (InternalFileHandleResolver.)))
   ([^AssetManager am res]
     (.setLoader am TiledMap (TmxMapLoader. res))
-    (.setLoader am ParticleEffect (proxy [ParticleEffectLoader] [res]
+    #_(.setLoader am ParticleEffect (proxy [ParticleEffectLoader] [res]
                                     (load [am file-name fh param]
                                       (doto (ParticleEffect.)
                                         (.load fh (.parent fh))))))))

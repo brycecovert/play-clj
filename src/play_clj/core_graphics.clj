@@ -485,14 +485,12 @@ with the tiled map file at `path` and `unit` scale.
     (.end batch))
   entities)
 
-(defmethod draw! Stage
-  [{:keys [^Stage renderer ^Camera camera ^ShaderProgram shader] :as screen} entities]
+(def reset-color ^Color (color 1 1 1 1))
+
+(defn render-one [{:keys [^Stage renderer ^Camera camera ^ShaderProgram shader] :as screen} {:keys [additive? opacity ^float r ^float g ^float b ^float hue-amount ^float multiply-amount] :as entity :or {opacity 1.0}}]
   (let [^Batch batch (.getBatch renderer)]
-    (.setProjectionMatrix batch (.combined camera))
-    #_(.begin batch)
-    
-    (doseq [{:keys [additive? opacity ^float r ^float g ^float b ^float hue-amount ^float multiply-amount] :as entity :or {opacity 1.0}} entities
-            :when (> opacity 0.0)]
+    (.setProjectionMatrix batch (.combined camera))   
+    (when (> opacity 0.0)
       (when shader
         (.setShader batch shader)
         (.setUniformf shader "multiply_amount" (float (or multiply-amount 1.0)))
@@ -500,14 +498,20 @@ with the tiled map file at `path` and `unit` scale.
       
       (when additive?
         (.setBlendFunction ^Batch batch (gl :gl-src-alpha) (gl :gl-one)))
-      (do (.setColor batch (color (or r 1.0) (or g 1.0) (or b 1.0)  opacity))
+      (do (.setColor batch (float (or r 1.0)) (float (or g 1.0)) (float (or b 1.0))  (float opacity))
           (e/draw! entity screen batch)
-          (.setColor batch (color 1 1 1 1)))
+          (.setColor batch ^Color reset-color))
       
       (when (or additive?)
-        (.setBlendFunction ^Batch batch (gl :gl-src-alpha) (gl :gl-one-minus-src-alpha))))
-    #_(.end batch))
+        (.setBlendFunction ^Batch batch (gl :gl-src-alpha) (gl :gl-one-minus-src-alpha))))))
+
+(defmethod draw! Stage
+  [screen entities]
+  (doseq [entity entities]
+    (render-one screen entity))
   entities)
+
+
 
 (defmethod draw! ModelBatch
   [{:keys [^ModelBatch renderer ^Camera camera] :as screen} entities]
